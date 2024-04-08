@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 import { extensionConfiguration, getOutputChannel } from "./utils";
 import { ExtensionConfiguration, LinterConfiguration, ToolCheckFunc, Tool } from "./types";
 import * as muon from "./tools/muon";
@@ -28,7 +28,10 @@ async function reloadLinters(
     return disposables;
   }
 
-  let enabledLinters: ((document: vscode.TextDocument) => Promise<vscode.Diagnostic[]>)[] = [];
+  let enabledLinters: ((document: {
+      version: number
+      uri: string
+    }) => Promise<vscode.Diagnostic[]>)[] = [];
   let name: keyof typeof linters;
 
   for (name in linters) {
@@ -49,10 +52,13 @@ async function reloadLinters(
     enabledLinters.push(linter);
   }
 
-  const lintAll = (document: vscode.TextDocument) => {
-    if (document.languageId != "meson") {
-      return;
-    }
+  const lintAll = (document: {
+      version: number
+      uri: string
+    }) => {
+    // if (document.languageId != "meson") {
+    //   return;
+    // }
 
     Promise.all(enabledLinters.map((l) => l(document))).then((values) => {
       diagnostics.set(document.uri, values.flat());
@@ -60,7 +66,7 @@ async function reloadLinters(
   };
 
   const subscriptions = [
-    vscode.workspace.onDidChangeTextDocument((c) => lintAll(c.document)),
+    vscode.workspace.onDidChangeTextDocument((c) => lintAll(c.textDocument)),
     vscode.window.onDidChangeActiveTextEditor((e) => {
       if (e) {
         lintAll(e.document);

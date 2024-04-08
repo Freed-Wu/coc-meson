@@ -1,9 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
+import { Thenable } from "coc.nvim";
 import * as which from "which";
 
+import { readdir } from 'fs/promises';
 import { createHash, BinaryLike } from "crypto";
 import { ExtensionConfiguration, Target, SettingsKey, ModifiableExtension } from "./types";
 import { getMesonBuildOptions } from "./introspection";
@@ -192,19 +194,21 @@ export function checkMesonIsConfigured(buildDir: string) {
 export async function mesonRootDirs(): Promise<string[]> {
   let rootDirs: string[] = [];
   let pending: vscode.Uri[] = [];
-  vscode.workspace.workspaceFolders!.forEach((i) => pending.push(i.uri));
+  vscode.workspace.workspaceFolders!.forEach((i) => pending.push(vscode.Uri.parse(i.uri)));
   while (true) {
     const d = pending.pop();
     if (!d) break;
     let hasMesonFile: boolean = false;
     let subdirs: vscode.Uri[] = [];
-    for (const [name, type] of await vscode.workspace.fs.readDirectory(d)) {
-      if (type & vscode.FileType.File && name == "meson.build") {
+    // for (const [name, type] of await vscode.workspace.fs.readDirectory(d)) {
+    let type = true;
+    for (const name/* , type */ of await readdir(d.fsPath)) {
+      if (type/*  & vscode.FileType.File */ && name == "meson.build") {
         rootDirs.push(d.fsPath);
         hasMesonFile = true;
         break;
-      } else if (type & vscode.FileType.Directory) {
-        subdirs.push(vscode.Uri.joinPath(d, name));
+      } else if (type/*  & vscode.FileType.Directory */) {
+        subdirs.push(vscode.Uri.file(path.resolve(d.fsPath, name)));
       }
     }
     if (!hasMesonFile) {

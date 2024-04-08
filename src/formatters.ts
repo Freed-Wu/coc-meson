@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 import { extensionConfiguration, getOutputChannel } from "./utils";
 import { ToolCheckFunc, Tool } from "./types";
 import * as muon from "./tools/muon";
@@ -34,7 +34,7 @@ async function reloadFormatters(sourceRoot: string, context: vscode.ExtensionCon
     return disposables;
   }
 
-  const sub = vscode.languages.registerDocumentFormattingEditProvider("meson", {
+  const sub = vscode.languages.registerDocumentFormatProvider(["meson"], {
     async provideDocumentFormattingEdits(document: vscode.TextDocument): Promise<vscode.TextEdit[]> {
       return await props.format(tool!, sourceRoot, document);
     },

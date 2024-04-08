@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 import * as path from "path";
 import { extensionConfiguration, extensionConfigurationSet } from "./utils";
 import { SettingsKey } from "./types";
@@ -112,7 +112,7 @@ export async function selectRootDir(rootDirs: string[]): Promise<string | undefi
   const selection = await vscode.window.showQuickPick(items, {
     canPickMany: false,
     title: "Select configuration to use.",
-    placeHolder: "path/to/meson.build",
+    // placeHolder: "path/to/meson.build",
   });
   if (selection) return rootDirs[selection.index];
   return undefined;

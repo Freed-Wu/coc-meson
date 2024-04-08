@@ -1,8 +1,8 @@
 import * as os from "os";
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 
 import { LanguageServerClient } from "../lsp";
-import { Executable } from "vscode-languageclient/node";
+import { Executable } from "coc.nvim";
 
 export class SwiftMesonLspLanguageClient extends LanguageServerClient {
   private static artifacts: { [key: string]: { name: string; hash: string } } = {

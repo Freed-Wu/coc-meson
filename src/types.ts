@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 
 type Dict<T> = { [x: string]: T };
 export type Tool = { path: string; version: [number, number, number] };

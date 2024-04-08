@@ -1,11 +1,11 @@
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 import { ExecResult, exec, execFeed, extensionConfiguration, getOutputChannel } from "../utils";
 import { Tool } from "../types";
 
 export async function lint(muon: Tool, root: string, document: vscode.TextDocument): Promise<vscode.Diagnostic[]> {
   const { stderr } = await execFeed(
     muon.path,
-    ["analyze", "-l", "-O", document.uri.fsPath],
+    ["analyze", "-l", "-O", vscode.Uri.parse(document.uri).fsPath],
     { cwd: root },
     document.getText(),
   );
@@ -22,11 +22,11 @@ export async function lint(muon: Tool, root: string, document: vscode.TextDocume
     const col = Number(parts[2]);
     const fullmsg = parts.slice(3).join(":").trim();
 
-    if (file != document.uri.fsPath) {
+    if (file != vscode.Uri.parse(document.uri).fsPath) {
       return;
     }
 
-    const range = new vscode.Range(line_no - 1, col, line_no - 1, col);
+    const range = /* new  */vscode.Range.create(line_no - 1, col, line_no - 1, col);
 
     let severity: vscode.DiagnosticSeverity = vscode.DiagnosticSeverity.Error;
     if (fullmsg.startsWith("warn")) {
@@ -35,14 +35,14 @@ export async function lint(muon: Tool, root: string, document: vscode.TextDocume
 
     const msg = fullmsg.slice(fullmsg.indexOf(" ") + 1);
 
-    const diagnostic = new vscode.Diagnostic(range, msg, severity);
+    const diagnostic = /* new  */vscode.Diagnostic.create(range, msg, severity);
     diagnostics.push(diagnostic);
   });
 
   return diagnostics;
 }
 
-export async function format(muon: Tool, root: string, document: vscode.TextDocument): Promise<vscode.TextEdit[]> {
+export async function format(muon: Tool, root: string, document: vscode.LinesTextDocument): Promise<vscode.TextEdit[]> {
   const originalDocumentText = document.getText();
 
   let args = ["fmt"];
@@ -64,12 +64,12 @@ export async function format(muon: Tool, root: string, document: vscode.TextDocu
     return [];
   }
 
-  const documentRange = new vscode.Range(
+  const documentRange = /* new  */vscode.Range.create(
     document.lineAt(0).range.start,
     document.lineAt(document.lineCount - 1).rangeIncludingLineBreak.end,
   );
 
-  return [new vscode.TextEdit(documentRange, stdout)];
+  return [/* new  */vscode.TextEdit.replace(documentRange, stdout)];
 }
 
 export async function check(): Promise<{ tool?: Tool; error?: string }> {

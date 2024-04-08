@@ -5,16 +5,16 @@ import * as crypto from "crypto";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as vscode from "vscode";
+import * as vscode from "coc.nvim";
 import {
-  DidChangeConfigurationNotification,
-  DidChangeConfigurationParams,
+  // DidChangeConfigurationNotification,
+  // DidChangeConfigurationParams,
   Executable,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
-} from "vscode-languageclient/node";
+} from "coc.nvim";
 import * as storage from "../storage";
 import { LanguageServer } from "../types";
 import { serverToClass } from "./common";
@@ -50,9 +50,9 @@ export abstract class LanguageServerClient {
   }
 
   private static cachedLanguageServer(server: LanguageServer, context: vscode.ExtensionContext): vscode.Uri | null {
-    const uri = vscode.Uri.joinPath(
-      storage.uri(storage.Location.LSP, context),
-      `${server}${os.platform() === "win32" ? ".exe" : ""}`,
+    const uri = vscode.Uri.parse(
+      storage.uri(storage.Location.LSP, context).toString() +
+        `${server}${os.platform() === "win32" ? ".exe" : ""}`,
     );
 
     return fs.existsSync(uri.fsPath) ? uri : null;
@@ -214,10 +214,10 @@ export abstract class LanguageServerClient {
 
   async reloadConfig(): Promise<void> {
     const config = vscode.workspace.getConfiguration(`mesonbuild.${this.server}`);
-    const params: DidChangeConfigurationParams = {
-      settings: config,
-    };
-    await this.ls!.sendNotification(DidChangeConfigurationNotification.type, params);
+    // const params: DidChangeConfigurationParams = {
+    //   settings: config,
+    // };
+    // await this.ls!.sendNotification(DidChangeConfigurationNotification.type, params);
   }
 
   async update(context: vscode.ExtensionContext): Promise<void> {
