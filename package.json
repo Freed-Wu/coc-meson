@@ -1,5 +1,5 @@
 {
-  "name": "mesonbuild",
+  "name": "coc-meson",
   "displayName": "Meson",
   "description": "Meson language support for Visual Studio Code",
   "icon": "graphics/icon.png",
@@ -26,25 +26,26 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mesonbuild/vscode-meson.git"
+    "url": "https://github.com/Freed-Wu/coc-meson"
   },
   "bugs": {
-    "url": "https://github.com/mesonbuild/vscode-meson/issues"
+    "url": "https://github.com/Freed-Wu/coc-meson/issues"
   },
-  "homepage": "https://github.com/mesonbuild/vscode-meson/blob/master/README.md",
+  "homepage": "https://github.com/Freed-Wu/coc-meson/blob/master/README.md",
   "engines": {
-    "vscode": "^1.75.0"
+    "coc": "^0.0.82"
   },
   "categories": [
     "Programming Languages"
   ],
   "activationEvents": [
+    "onLanguage:meson",
     "workspaceContains:**/meson.build",
     "onDebugDynamicConfigurations",
     "onDebugDynamicConfigurations:cppdbg",
     "onDebugDynamicConfigurations:lldb"
   ],
-  "main": "./out/extension",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -229,7 +230,7 @@
         "mesonbuild.languageServerPath": {
           "type": "string",
           "description": "Binary name or path to language server",
-          "default": ""
+          "default": "mesonlsp"
         },
         "mesonbuild.downloadLanguageServer": {
           "type": [
@@ -505,8 +506,8 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
+    "prepack": "tsc -p ./",
     "markdownlint:check": "markdownlint-cli2 **.md",
-    "postinstall": "husky install",
     "prettier:check": "prettier --check **.md **.ts **.yml **.json",
     "vscode:prepublish": "npm run compile",
     "watch": "tsc -watch -p ./"
@@ -514,19 +515,16 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.1",
     "@types/node": "^16.11.7",
-    "@types/vscode": "^1.75.0",
     "@types/which": "^3.0.0",
+    "coc.nvim": "^0.0.83-next.18",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "markdownlint-cli2": "^0.10.0",
     "prettier": "^3.0.3",
-    "typescript": "^5.2.2",
-    "vscode-textmate": "^9.0.0"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "adm-zip": "^0.5.10",
-    "vscode-cpptools": "^6.1.0",
-    "vscode-languageclient": "^9.0.1",
     "which": "^4.0.0"
   },
   "prettier": {
