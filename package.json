@@ -3,7 +3,7 @@
   "displayName": "Meson",
   "description": "Meson language support for Visual Studio Code",
   "icon": "graphics/icon.png",
-  "version": "1.22.0",
+  "version": "1.22.1-rc1",
   "license": "Apache-2.0",
   "publisher": "mesonbuild",
   "author": {
@@ -40,7 +40,6 @@
   ],
   "activationEvents": [
     "onLanguage:meson",
-    "workspaceContains:**/meson.build",
     "onDebugDynamicConfigurations",
     "onDebugDynamicConfigurations:cppdbg",
     "onDebugDynamicConfigurations:lldb"
